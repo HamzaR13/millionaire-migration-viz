@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Millionaire Migration Visualization</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="page-header">
+      <p class="eyebrow">CSC316 Interactive Visualization</p>
+      <h1>Global Millionaire Migration Visualization</h1>
+      <p class="page-description">
+        Explore which countries are attracting or losing high-net-worth individuals,
+        and how millionaire migration is reshaping global wealth patterns.
+      </p>
+    </header>
+
+    <section class="controls-panel" aria-label="Visualization controls">
+      <div class="control-group">
+        <span class="control-label">Metric</span>
+        <div class="control-options">
+          <label>
+            <input type="radio" name="metric" value="netMigration" checked>
+            Net migration
+          </label>
+          <label>
+            <input type="radio" name="metric" value="wealth">
+            Migrating wealth
+          </label>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="country-select">Focus country</label>
+        <select id="country-select" class="country-select">
+          <option value="">Select a country</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="guide-card" aria-label="How to read this visualization">
+      <h2>How to Read This</h2>
+      <div class="guide-grid">
+        <p><strong>Step 1:</strong> Compare countries on the map to spot major gainers and losers of wealthy residents.</p>
+        <p><strong>Step 2:</strong> Switch between net migration and migrating wealth to see whether the same places dominate both measures.</p>
+        <p><strong>Step 3:</strong> Click a country to inspect its detailed wealth profile and compare it with the broader global trend.</p>
+      </div>
+    </section>
+
+    <main class="viz-layout">
+      <section class="viz-panel">
+        <div class="panel-heading panel-heading-inline">
+          <div>
+            <h2>World Map</h2>
+            <p>Countries are colored by the selected millionaire migration metric.</p>
+          </div>
+          <button id="reset-map" class="secondary-button" type="button">Reset View</button>
+        </div>
+
+        <div id="map-container" class="map-container">
+          <div id="tooltip" class="tooltip" role="status" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <aside class="side-panel">
+        <div class="panel-heading">
+          <h2>Country Details</h2>
+          <p>Use the map to compare gainers and losers, then inspect a country in more detail.</p>
+        </div>
+
+        <div id="key-takeaways" class="insight-card">
+          <h3>Key Takeaways</h3>
+          <p>Loading highlights...</p>
+        </div>
+
+        <div id="country-summary" class="detail-card">
+          <h3>Select a country</h3>
+          <p>Click a country on the map or choose one from the dropdown to inspect its millionaire migration profile.</p>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-heading">
+            <h3>Global Migration by Year</h3>
+            <p>Total migrating millionaires across all countries.</p>
+          </div>
+          <div id="yearly-chart" class="yearly-chart"></div>
+        </div>
+
+        <div id="status-message" class="status-card">Loading data...</div>
+      </aside>
+    </main>
+
+    <footer class="page-footer">
+      <p><strong>Data:</strong> Kaggle millionaire migration dataset.</p>
+      <p><strong>Map geometry:</strong> world GeoJSON stored locally in <code>data/world.geojson</code>.</p>
+      <p><strong>Built with:</strong> D3.js v7 for CSC316.</p>
+    </footer>
+  </div>
+
+  <script>
+    function updateBootMessage(message) {
+      const statusCard = document.getElementById("status-message");
+      const mapContainer = document.getElementById("map-container");
+
+      if (statusCard) {
+        statusCard.textContent = message;
+      }
+
+      if (mapContainer) {
+        mapContainer.innerHTML = `<div class="empty-state">${message}</div>`;
+      }
+    }
+
+    window.handleD3LoadError = function handleD3LoadError() {
+      updateBootMessage("D3 could not be loaded from the CDN. Check your internet connection or use a local D3 file.");
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7" onerror="handleD3LoadError()"></script>
+  <script type="module">
+    if (window.location.protocol === "file:") {
+      updateBootMessage("This project must be opened with a local web server. Use VS Code Live Server or run: python -m http.server 8000");
+    } else if (!window.d3) {
+      updateBootMessage("D3 is not available, so the visualization could not start.");
+    } else {
+      import("./js/main.js").catch((error) => {
+        console.error("Failed to load main.js:", error);
+        updateBootMessage("The app failed to start. Open the browser console and check for import or data-loading errors.");
+      });
+    }
+  </script>
+</body>
+</html>
